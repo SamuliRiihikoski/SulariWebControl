@@ -1,0 +1,45 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Sulari Monitori</title>
+    </head>
+
+    <body>
+        <div id="sulari">
+            <h3>LED-Lampun Ohjauspaneeli</h3>
+
+            <form v-on:submit.prevent="send">
+                Vaihda LED-Lampun tila
+                <button>Toggle LED</button>
+            </form>
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+        <script>
+            var socket = io();
+
+            new Vue({
+                el: '#sulari',
+
+                data: {
+                    ledState: '0'
+                },
+
+                methods: {
+                    send: function(e) {
+                        socket.emit('message', this.ledState);
+
+                        if (this.ledState == '0')
+                            this.ledState = '1';
+                        else
+                            this.ledState = '0';
+
+                        console.log("Led state now: " + this.ledState);
+                    }
+                }
+            })
+        </script>
+    </body>
+</html>
