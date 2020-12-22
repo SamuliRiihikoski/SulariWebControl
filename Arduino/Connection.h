@@ -1,9 +1,12 @@
 #include <SoftwareSerial.h>
+#include "CustomStringMethods.h"
 
 struct ESP_chip {
 
   SoftwareSerial _espSerial =  SoftwareSerial(2,3);
   boolean _debug=true;
+  ModifyString modString;
+  int _index = 0;
    
 
   void connect_wifi();
@@ -13,15 +16,18 @@ struct ESP_chip {
   void clearESP_buffer(int timeout);
   void readSerial();
 
-};
+  ESP_chip()
+  {
+    _espSerial.begin(115200);
+  }
+
+ };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void ESP_chip::connect_wifi()
 {
-  Serial.println("Creating conection");
-
-  Serial.println("Connecting to network...");
+  Serial.println("Connecting to Wifi network...");
   clearESP_buffer(1000);
   _espSerial.println("AT+GMR");
   waitForResponse("OK",1000);
@@ -30,11 +36,14 @@ void ESP_chip::connect_wifi()
   waitForResponse("OK",1000);
   
   //--- connect
-  _espSerial.println("AT+CWJAP=\"LavatanssitIsBack\",\"Koivusalo56\"");
+  _espSerial.println("AT+CWJAP=\"AndroidAP\",\"ywgn9923\"");
   waitForResponse("OK",10000);
   
   _espSerial.println("AT+CIPMUX=1");         // configure for multiple connections   
   waitForResponse("OK",1000);
+
+  _espSerial.println("AT+CIFSR");         // Show ESP-01 IP
+  waitForResponse("OK",1000); 
   
   _espSerial.println("AT+CIPSERVER=1,80");
   waitForResponse("OK",1000);
@@ -86,11 +95,24 @@ void ESP_chip::clearESP_buffer(int timeout){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void ESP_chip::readSerial()
-{
+{ 
+  char inputbuffer[100];
+  int incomingByte = 0;
+  char letter;
+  
   if (_espSerial.available())
   {
     delay(1);
-    String espBuffer = _espSerial.readStringUntil('\r');
-    _espSerial.print("Moikka");
+    
+    incomingByte = _espSerial.read();
+    letter = incomingByte;
+    
+    Serial.print("I received: ");
+    Serial.println(letter);
+    Serial.println("");
+    //Serial.println(_index);
   }
+  else
+    _index = 0;
+  
 }

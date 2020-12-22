@@ -1,6 +1,6 @@
 #include "Connection.h"
 
-ESP_chip Esp; // Handle Wifi connection methods
+ESP_chip Esp; // Handle ESP-01 methods
 
 const int tempPin = A0;
 int val = 0;
@@ -13,6 +13,7 @@ struct Tieto {
 void setup() 
 {
   Serial.begin(9600);
+  
   Esp.connect_wifi();
 }
 
@@ -27,6 +28,5 @@ void loop()
 
 void mainCycle()
 {
-  Serial.println("MOI");
   Esp.readSerial();
 }
