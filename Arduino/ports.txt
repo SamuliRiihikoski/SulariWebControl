@@ -1,0 +1,4 @@
+2 = RX, ESP-01
+3 = TX, ESP-01
+
+A0 = Tempetsture sensor, LM35
