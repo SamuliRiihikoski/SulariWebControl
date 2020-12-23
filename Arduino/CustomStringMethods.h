@@ -1,16 +1,12 @@
 
-struct ModifyString 
+struct ModifyCharArray
 {
-  String cleanString(String input);
+  void getData(char* input);
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-String ModifyString::cleanString(String input)
+void ModifyCharArray::getData(char* input)
 {
-  int inputLength = input.length();
-  int beginning = input.indexOf(':') + 1;
-  String newString = input.substring(beginning, inputLength);
-
-  return newString;
+  Serial.println("Edit char array"); // TODO
 }

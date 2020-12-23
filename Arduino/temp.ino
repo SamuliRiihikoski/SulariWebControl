@@ -1,6 +1,6 @@
 #include "Connection.h"
 
-ESP_chip Esp; // Handle ESP-01 methods
+ESP_chip Esp01; // Handle ESP-01 methods
 
 const int tempPin = A0;
 int val = 0;
@@ -14,7 +14,7 @@ void setup()
 {
   Serial.begin(9600);
   
-  Esp.connect_wifi();
+  Esp01.connect_wifi();
 }
 
 void loop() 
@@ -23,10 +23,5 @@ void loop()
   tempVolt = (val / (float)1023) * 5.0;
   //Serial.println(tempVolt * 100);
 
-  mainCycle();
-}
-
-void mainCycle()
-{
-  Esp.readSerial();
+  Esp01.readSerial();
 }
