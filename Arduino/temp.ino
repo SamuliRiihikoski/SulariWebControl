@@ -27,7 +27,7 @@ void loop()
   val = analogRead(tempPin);
   tempAmount = (val / (float)1023) * 5.0;
   tempAmount *= 100;
-  Serial.println(tempAmount);
+  //Serial.println(tempAmount);
 
   Esp01.readSerial();
 
