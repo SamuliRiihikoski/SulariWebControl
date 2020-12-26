@@ -1,40 +1,29 @@
 #include "Connection.h"
 
-#define UPDATE_TIME 10000 // ms -> 10s
+#define CYCLE_DURATION 10000 // ms -> 10s
+
 long start;
-
-ESP_chip Esp01; // Handle ESP-01 methods
-
-const int tempPin = A0;
-int val = 0;
-float tempAmount = 0;
-
-struct Tieto {
-  int luku;
-};
+const int PIN_temperature = A0;
 
 void setup() 
 {
   Serial.begin(9600);
   start = millis();
-  
+  ESP_chip Esp01; // Handle ESP-01 methods
   Esp01.connect_wifi();
 }
 
 void loop() 
-{
-  
-  val = analogRead(tempPin);
-  tempAmount = (val / (float)1023) * 5.0;
-  tempAmount *= 100;
-  //Serial.println(tempAmount);
-
+{  
+  ESP_chip Esp01; // Handle ESP-01 methods
   Esp01.readSerial();
-
   
-  if (millis() - start > UPDATE_TIME)
+  if (millis() - start > CYCLE_DURATION)
   {
-    Esp01.dataToServer(tempAmount);
+    int value = analogRead(PIN_temperature);
+    value = (value*50000) / 1023;
+
+    Esp01.send_GET(value);
     start = millis();
   }
 }

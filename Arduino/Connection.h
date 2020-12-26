@@ -16,7 +16,7 @@ struct ESP_chip {
   boolean waitForResponse(char* target,  int timeout);
   void clearESP_buffer(int timeout);
   void readSerial();
-  void dataToServer(float tempAmount);
+  void send_GET(int tempAmount);
   void executeCommand();
 
   ESP_chip()
@@ -136,28 +136,22 @@ void ESP_chip::readSerial()
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void ESP_chip::dataToServer(float tempAmount)
+void ESP_chip::send_GET(int sensorData)
 {
-  int string_length = 67;
-  
-  String data_part = "?sensor=";
-  data_part += String(tempAmount);
-  
-  string_length += data_part.length();
-  String atLength = "AT+CIPSEND=0,"; // 67 oikea
-  atLength += String(string_length);
-  
-  Serial.println("Data to server");
-  
+  int string_length;
+  char message[100];
+  charArrayMethods cMet;
+
+  string_length = cMet.createGetMessage(message, sensorData);
+
   _espSerial.println("AT+CIPSTART=0,\"TCP\",\"3.140.78.112\",80");
   waitForResponse("OK",1000);
 
-   _espSerial.println(atLength);
-   waitForResponse("OK",1000);
-
-  _espSerial.println("GET /update" + data_part + " HTTP/1.1");  // 20
-  _espSerial.println("Host: www.meshare.live"); // 22
-  _espSerial.println("Connection: close"); // 17
+  _espSerial.print("AT+CIPSEND=0,");
+  _espSerial.println(string_length+4); // needs extra 4 because \r\n in the end
+  waitForResponse("OK",1000);
+  
+  _espSerial.println(message);  // 20
   _espSerial.println(); // end HTTP header
   delay(2000);
   
@@ -172,6 +166,6 @@ void ESP_chip::executeCommand()
   charArrayMethods cMet;
   if (cMet.isMatch(inputbuffer, "TEMP"))
   {
-    dataToServer(1.0);
+    send_GET(1.0);
   }
 }

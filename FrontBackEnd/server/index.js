@@ -14,7 +14,10 @@ app.get('/', function(request, response) {
 
 app.get('/update', function(request, response) {
     console.log("Viesti:" + request.query.sensor);
-    io.emit('sensor', request.query.sensor);
+    let num = parseInt(request.query.sensor);
+    num = num / 100;
+    let text = num.toString();
+    io.emit('sensor', text);
 });
 
 app.listen(8080, ()=> {
