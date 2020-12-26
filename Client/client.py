@@ -2,6 +2,7 @@ import socketio
 import socket
 
 TCP_IP = '192.168.1.72'
+
 TCP_PORT = 80
 BUFFER_SIZE = 1024
 
@@ -30,11 +31,14 @@ def print_message(message):
     
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((TCP_IP, TCP_PORT))
-    s.send(MESSAGE)
-    s.close()
+    try:
+        s.connect((TCP_IP, TCP_PORT))
+        s.send(MESSAGE)
+        s.close()
+    except:
+        pass
 
-
-sio.connect('http://3.140.78.112:80')
+#sio.connect('http://3.140.78.112:80')
+sio.connect('127.0.0.1:80')
 
 sio.wait()

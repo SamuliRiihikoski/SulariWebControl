@@ -7,7 +7,6 @@ struct ESP_chip {
   char inputbuffer[100];
   
   boolean _debug=true;
-  ModifyCharArray editInput;
   int _index = 0;
   bool _saveLetter = false;
    
@@ -17,6 +16,8 @@ struct ESP_chip {
   boolean waitForResponse(char* target,  int timeout);
   void clearESP_buffer(int timeout);
   void readSerial();
+  void dataToServer();
+  void executeCommand();
 
   ESP_chip()
   {
@@ -34,23 +35,22 @@ void ESP_chip::connect_wifi()
   _espSerial.println("AT+GMR");
   waitForResponse("OK",1000);
   
-  _espSerial.println("AT+CWMODE=2");  // configure as access point. If you have router then mode=1 is better with unchecking /* */ part
+  _espSerial.println("AT+CWMODE=1");  // 1=STATION, 2=ACCESS POINT, 3=BOTH
   waitForResponse("OK",1000);
-  /*
+  
   //--- connect
-  _espSerial.println("AT+CWJAP=\"NetworkName\",\"Password\"");
+  _espSerial.println("AT+CWJAP=\"AndroidAP\",\"ywgn9923\"");
   waitForResponse("OK",10000);
   
   _espSerial.println("AT+CIPMUX=1");         // configure for multiple connections   
   waitForResponse("OK",1000);
-*/
 
   _espSerial.println("AT+CWSAP?");         // Show ESP-01 IP
  waitForResponse("OK",1000); 
-/*  
+
   _espSerial.println("AT+CIPSERVER=1,80");
   waitForResponse("OK",1000);
-  */
+ 
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -83,6 +83,8 @@ boolean ESP_chip::waitForResponse(char* target,  int timeout)
 
     if (match) { rValue = true; break; }
   }
+
+  Serial.println("");
   
   return rValue;
 }
@@ -126,6 +128,43 @@ void ESP_chip::readSerial()
     _index = 0;
     Serial.print("Command received: ");
     Serial.println(inputbuffer);
+
+    executeCommand();
   }
   
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void ESP_chip::dataToServer()
+{
+  String atLength = "AT+CIPSEND=0,67"; // 67 oikea
+  
+  Serial.println("Data to server");
+  
+  _espSerial.println("AT+CIPSTART=0,\"TCP\",\"3.140.78.112\",80");
+  waitForResponse("OK",1000);
+
+   _espSerial.println(atLength);
+   waitForResponse("OK",1000);
+
+  _espSerial.println("GET /update HTTP/1.1");  // 20
+  _espSerial.println("Host: www.meshare.live"); // 22
+  _espSerial.println("Connection: close"); // 17
+  _espSerial.println(); // end HTTP header
+  delay(2000);
+  
+  _espSerial.println("AT+CIPCLOSE=0");
+  waitForResponse("OK",1000);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void ESP_chip::executeCommand()
+{
+  charArrayMethods cMet;
+  if (cMet.isMatch(inputbuffer, "TEMP"))
+  {
+    dataToServer();
+  }
 }

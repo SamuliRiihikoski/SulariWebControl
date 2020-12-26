@@ -2,11 +2,22 @@ var app = require('express')();
 var server = require('http').Server(app);
 var path = require('path');
 var io = require('socket.io')(server);
+var net = require('net');
 
-server.listen(3000);
+server.listen(80);
 
 app.get('/', function(request, response) {
     response.sendFile(path.join(__dirname + '/public/index.html'));
+    console.log("Moikka");
+
+});
+
+app.get('/update', function(request, response) {
+    console.log("Viesti saatu perille");
+});
+
+app.listen(8080, ()=> {
+    console.log("Heisan portista 8080");
 });
 
 io.on('connection', function(socket) {
@@ -14,3 +25,8 @@ io.on('connection', function(socket) {
         io.emit('message', message);
     });
 });
+
+setInterval(function(){ 
+    console.log("hi");
+    io.emit('message', 'TEMP');
+}, 5000);
