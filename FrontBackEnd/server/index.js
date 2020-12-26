@@ -13,7 +13,8 @@ app.get('/', function(request, response) {
 });
 
 app.get('/update', function(request, response) {
-    console.log("Viesti saatu perille");
+    console.log("Viesti:" + request.query.sensor);
+    io.emit('sensor', request.query.sensor);
 });
 
 app.listen(8080, ()=> {

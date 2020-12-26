@@ -12,6 +12,7 @@
                 Vaihda LED-Lampun tila
                 <button>Toggle LED</button>
             </form>
+	    Takkahuoneen lämpötila: {{ sensor }}
         </div>
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js"></script>
@@ -24,8 +25,17 @@
                 el: '#sulari',
 
                 data: {
-                    ledState: '0'
+                    ledState: '0',
+		    sensor: '23'
                 },
+
+		mounted() {
+			console.log("T");
+			socket.on('sensor', (data) => {
+				console.log("updating sensor data:" + data);
+				this.sensor = data;
+			});
+		},
 
                 methods: {
                     send: function(e) {
