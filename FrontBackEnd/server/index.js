@@ -31,17 +31,16 @@ app.get('/update', function(request, response)
 io.on('connection', function(socket) 
 {
     socket.on('message', function(message) {
-
-        if (arduinoReady)
-            io.emit('message', message);
-        else
-            commandBuffer.push(message);
+        commandBuffer.push(message);
+        index = 0;
     });
 });
 
 setInterval(function() {  // Commands needs to have : in the end. Reason because in arduino that is the mark for end of the command
     
-    if (commandBuffer.length > 0)
+    if (arduinoReady == false) return;
+
+    if (commandBuffer.length > 0 && index > 0)
     {
         sendCommand = commandBuffer.pop();
         io.emit('message', sendCommand);
