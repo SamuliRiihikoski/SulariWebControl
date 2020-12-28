@@ -38,7 +38,7 @@ def print_message(message):
     except:
         pass
 
-#sio.connect('http://3.140.78.112:80')
-sio.connect('127.0.0.1:80')
+sio.connect('http://3.140.78.112:80')
+#sio.connect('127.0.0.1:80')
 
 sio.wait()

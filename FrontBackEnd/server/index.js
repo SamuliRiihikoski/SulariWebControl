@@ -4,6 +4,8 @@ var path = require('path');
 var io = require('socket.io')(server);
 var net = require('net');
 
+let sensor = "";
+
 server.listen(80);
 
 app.get('/', function(request, response) {
@@ -20,17 +22,18 @@ app.get('/update', function(request, response) {
     io.emit('sensor', text);
 });
 
-app.listen(8080, ()=> {
-    console.log("Heisan portista 8080");
-});
-
 io.on('connection', function(socket) {
     socket.on('message', function(message) {
+        sensor = "LAMP";
         io.emit('message', message);
     });
 });
 
-setInterval(function(){ 
-    console.log("hi");
-    io.emit('message', 'TEMP');
+setInterval(function(){  // Commands needs to have : in the end. Reason because in arduino that is the mark for end of the command
+    if (sensor == "LAMP") {
+        io.emit('message', 'LAMP:'); 
+        sensor = "";
+    }
+    else
+        io.emit('message', 'TEMP:');  
 }, 5000);

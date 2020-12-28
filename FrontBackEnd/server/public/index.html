@@ -39,14 +39,9 @@
 
                 methods: {
                     send: function(e) {
-                        socket.emit('message', this.ledState);
+                        socket.emit('message', 'LAMP');
 
-                        if (this.ledState == '0')
-                            this.ledState = '1';
-                        else
-                            this.ledState = '0';
-
-                        console.log("Led state now: " + this.ledState);
+                        console.log("TOGGLE LAMP");
                     }
                 }
             })
